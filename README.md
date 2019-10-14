@@ -92,7 +92,7 @@ TOKEN_A=ec005952-8c33-4bc0-8032-e07fdc420931 SIGNER_KEY=0x659cbb0e2411a44db63778
 
 The server will then exit after registration is complete.
 
-On subsequent runs (assuming the party is already registered), the MSP or CPO can simply be run like so:
+On subsequent runs (assuming the party is already registered), the MSP or CPO can simply be started like so:
 
 ```
 npm run start-msp
@@ -155,7 +155,7 @@ npm run build
 node dist/index.js --help
 ```
 
-If you want to run the TypeScript directly, you can use `ts-node`. It is included as a dependency for local use:
+If you want to run the TypeScript code directly, you can use `ts-node`. It is included as a dependency for local use:
 
 ```
 ./node_modules/.bin/ts-node src --help

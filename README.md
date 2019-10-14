@@ -104,7 +104,9 @@ or
 npm run start-cpo
 ```
 
-## Modifying default data
+## Next steps 
+
+### Modifying default data
 
 Data provided by the MSP or CPO (tokens, locations, tariffs etc.) exists in `src/data` and can be modified if necessary. Each
 data file is written in TypeScript, providing OCPI types and programmatic creation of data. It is also completely interoperable 
@@ -136,6 +138,52 @@ for (i = 0; i < 10000000; i++) {
         ...
     })
 }
+```
+
+### Making requests
+
+To make a request as the mock MSP or CPO, it is necessary to find the `TOKEN_C` which was given to the party during
+the OCPI credentials registration handshake with the OCN client. To do so, run the following:
+
+For the MSP:
+```
+sqlite3 msp.db "select token_c from auth;"
+```
+
+For the CPO:
+```
+sqlite3 cpo.db "select token_c from auth;"
+```
+
+Using the displayed token, requests can be made to the OCN client in OCPI format (version 2.2 RC2).
+
+#### Get locations
+
+You can send the following GET locations request as MSP, replacing the Authrozation TOKEN_C with that which was 
+obtained using the above SQL command.  
+
+```
+curl -s localhost:8080/ocpi/sender/2.2/locations -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"
+```
+
+To parse command line responses, [`jq`](https://stedolan.github.io/jq/) is recommended.
+
+For example, check if the OCPI response was successful (should be 1000):
+
+```
+<REQUEST> | jq .status_code
+```
+
+Pretty print response data:
+
+```
+<REQUEST> | jq .data
+```
+
+Count objects in response data array:
+
+```
+<REQUEST> | jq '.data | length'
 ```
 
 ## CLI API

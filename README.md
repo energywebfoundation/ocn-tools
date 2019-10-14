@@ -38,6 +38,7 @@ order to register the party to the OCN Registry and connect to an OCN Client. Be
 to register, they can be discarded on future runs.
 
 These variables are:
+
 - `TOKEN_A` - the OCPI credentials TOKEN_A which allows the party to connect to an OCN client
 - `SIGNER_KEY` - the private key used to sign the OCN registry listing
 - `SPENDER_KEY` - [optional] the private key which will pay the transaction fee for adding the party to the OCN registry (same as `SIGNER_KEY` if not provided)

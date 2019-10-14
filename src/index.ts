@@ -31,35 +31,48 @@ yargs
         }
 
         const mockAPI = new MockAPI()
-        const db = new Database()
         const registry = new DefaultRegistry(config.ocn.registry.provider, config.ocn.registry.address)
 
         if (args.cpo) {
+
+            console.log("Starting CPO server...")
+
             const cpoServer = await startBridge({
+                port: config.cpo.port,
                 publicBridgeURL: config.cpo.publicIP,
                 ocnClientURL: config.ocn.client,
                 roles: config.cpo.roles,
                 pluggableAPI: mockAPI,
-                pluggableDB: db,
+                pluggableDB: new Database("cpo.db"),
                 pluggableRegistry: registry,
                 logger: true
             })
 
+            console.log("CPO server listening for OCPI requests")
+
             if (args.registerOnly) {
+                console.log("Shutting down CPO server...")
                 await stopBridge(cpoServer)
             }
         } else if (args.msp) {
+
+            console.log("Starting MSP server...")
+
             const mspServer = await startBridge({
+                port: config.msp.port,
                 publicBridgeURL: config.msp.publicIP,
                 ocnClientURL: config.ocn.client,
                 roles: config.msp.roles,
                 pluggableAPI: mockAPI,
-                pluggableDB: db,
+                pluggableDB: new Database("msp.db"),
                 pluggableRegistry: registry,
                 logger: true
             })
 
+            console.log("MSP server listening for OCPI requests")
+
             if (args.registerOnly) {
+                console.log("Shutting down MSP server...")
                 await stopBridge(mspServer)
             }
         }

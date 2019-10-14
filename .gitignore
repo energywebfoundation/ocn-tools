@@ -1,3 +1,5 @@
-src/config/config.ts
 /dist/
 /node_modules/
+
+src/config/config.ts
+*.db

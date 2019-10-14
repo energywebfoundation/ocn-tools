@@ -75,6 +75,15 @@ TOKEN_A=ec005952-8c33-4bc0-8032-e07fdc420931 SIGNER_KEY=0x659cbb0e2411a44db63778
 
 Likewise the `npm` script `start-cpo` can be used to start and register the CPO server.
 
+If all was successful, something similar to the following should be printed to stdout:
+
+```
+Starting MSP server...
+GET /ocpi/versions 200 4.932 ms - 147
+GET /ocpi/versions/2.2 200 1.924 ms - 298
+MSP server listening for OCPI requests
+```
+
 If you only want to register the party, without a long-running server process, you may use the `--register-only` flag:
 
 ```
@@ -83,7 +92,7 @@ TOKEN_A=ec005952-8c33-4bc0-8032-e07fdc420931 SIGNER_KEY=0x659cbb0e2411a44db63778
 
 The server will then exit after registration is complete.
 
-On subsequent runs (assuming the party is already registered), the MSP or CPO can be run like so:
+On subsequent runs (assuming the party is already registered), the MSP or CPO can simply be run like so:
 
 ```
 npm run start-msp

@@ -186,6 +186,24 @@ Count objects in response data array:
 <REQUEST> | jq '.data | length'
 ```
 
+#### Get tariffs
+
+Likewise, tariffs can be obtained from the CPO using:
+
+```
+curl -s localhost:8080/ocpi/sender/2.2/tariffs -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"
+```
+
+#### Start charging session
+
+To start a charging session, use the following example command, containing the driver's OCPI token (the mock CPO will accept any):
+
+```
+curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/START_SESSION -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/sender/2.2/commands/START_SESSION/0", "location_id": "loc1", "token": {"country_code": "CH", "party_id": "MSP", "uid": "0", "type": "AD_HOC_USER", "contract_id": "0", "issuer": "test MSP", "valid": true, "whitelist": "NEVER", "last_updated": "2019-10-14T15:45:11.353Z"}}'
+```
+
+TODO: implement async command result, sessions and cdrs
+
 ## CLI API
 
 You can run the CLI entry point with `npm start`, however flags need to be declared with an additional `--`, e.g.
@@ -193,6 +211,7 @@ You can run the CLI entry point with `npm start`, however flags need to be decla
 ```
 npm start -- --help
 npm start mock -- --cpo
+npm run start-msp -- --register-only
 ```
 
 You can also use `node` or `ts-node`. As `ocn-tools` is written in TypeScript, it needs to be

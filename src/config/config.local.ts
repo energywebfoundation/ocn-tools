@@ -17,7 +17,7 @@ export const config = {
                 country_code: "CH",
                 role: "CPO",
                 business_details: {
-                    name: `Mock CPO ${uuid.v4()}`
+                    name: `Test CPO ${uuid.v4()}`
                 }
             }
         ]
@@ -31,7 +31,7 @@ export const config = {
                 country_code: "CH",
                 role: "EMSP",
                 business_details: {
-                    name: `Mock MSP ${uuid.v4()}`
+                    name: `Test MSP ${uuid.v4()}`
                 }
             }
         ]

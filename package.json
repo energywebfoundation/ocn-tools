@@ -1,0 +1,35 @@
+{
+  "name": "ocn-tools",
+  "version": "0.1.0",
+  "description": "Common tools for aiding development of applications built on top of the OCN",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "start": "ts-node src/index.ts",
+    "start-cpo": "ts-node src/index.ts mock --cpo",
+    "start-msp": "ts-node src/index.ts mock --msp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/shareandcharge/ocn-tools.git"
+  },
+  "author": "Share&Charge Foundation",
+  "license": "GPL-3.0",
+  "homepage": "https://bitbucket.org/shareandcharge/ocn-tools#readme",
+  "dependencies": {
+    "better-sqlite3": "^5.4.3",
+    "ocn-bridge": "git+ssh://git@bitbucket.org/shareandcharge/ocn-bridge.git",
+    "uuid": "^3.3.3",
+    "yargs": "^14.2.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^5.4.0",
+    "@types/uuid": "^3.4.5",
+    "@types/yargs": "^13.0.3",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
+  }
+}

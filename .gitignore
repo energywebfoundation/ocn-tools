@@ -1,1 +1,3 @@
-src/config/config.json
+src/config/config.ts
+/dist/
+/node_modules/

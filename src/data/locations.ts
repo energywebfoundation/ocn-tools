@@ -10,6 +10,19 @@ for (i = 1; i <= 10; i++) {
 
     const cpo = extractCPO(config.cpo.roles)
 
+    let tariffID: string
+
+    switch (true) {
+        case (i < 5):
+            tariffID = "1"
+            break
+        case (i < 8):
+            tariffID = "2"
+            break
+        default:
+            tariffID = "3"
+    }
+
     locations.push({
         country_code: cpo.country_code,
         party_id: cpo.party_id,
@@ -27,6 +40,16 @@ for (i = 1; i <= 10; i++) {
         operator: {
             name: cpo.business_details.name
         },
+        opening_times: {
+            twentyfourseven: false,
+            regular_hours: [1, 2, 3, 4, 5, 6, 7].map((n) => {
+                return {
+                    weekday: n,
+                    period_begin: "06:00",
+                    period_end: "24:00"
+                }
+            })
+        },
         evses: [
             {
                 uid: `CH-CPO-S${i}E100001`,
@@ -39,6 +62,7 @@ for (i = 1; i <= 10; i++) {
                     power_type: "AC_3_PHASE",
                     max_voltage: 220,
                     max_amperage: 16,
+                    tariff_ids: [tariffID],
                     last_updated: "2019-10-14T12:02:45.006Z"
                 }],
                 last_updated: "2019-10-14T12:02:45.006Z"
@@ -54,6 +78,7 @@ for (i = 1; i <= 10; i++) {
                     power_type: "AC_3_PHASE",
                     max_voltage: 220,
                     max_amperage: 16,
+                    tariff_ids: [tariffID],
                     last_updated: "2019-10-14T12:02:45.006Z"
                 }],
                 last_updated: "2019-10-14T12:02:45.006Z"

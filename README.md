@@ -31,7 +31,7 @@ and `cpo` config options should be changed to match the desired public IP of the
 because as part of the OCPI credentials handshake, the OCN client needs to fetch supported versions and modules 
 from the OCPI party.
 
-### 3. Prepare environment variables for registration
+### 2. Prepare environment variables for registration
 
 The mock MSP/CPO, in addition to the provided configuration parameters, need at least two environment variables in 
 order to register the party to the OCN Registry and connect to an OCN Client. Because these variables are only needed

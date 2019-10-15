@@ -219,7 +219,7 @@ When sending the request, the initial response should tell us that our request h
 
 When looking at the logs of the MSP server, there is additional information:
 
-```
+```html
 POST /ocpi/sender/2.2/commands/START_SESSION/0 200 0.696 ms - 59
 async command result [START_SESSION 0]: ACCEPTED
 ```

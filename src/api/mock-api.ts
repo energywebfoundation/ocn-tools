@@ -1,7 +1,7 @@
 import { IPluggableAPI } from "ocn-bridge";
-import { Commands } from "./commands";
-import { Locations } from "./locations";
-import { Tariffs } from "./tariffs";
+import { Commands } from "./commands/commands";
+import { Locations } from "./locations/locations";
+import { Tariffs } from "./tariffs/tariffs";
 
 export class MockAPI implements IPluggableAPI {
     public commands: Commands

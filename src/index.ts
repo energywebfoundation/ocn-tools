@@ -1,4 +1,5 @@
 import { DefaultRegistry, startBridge, stopBridge } from "ocn-bridge"
+import { ModuleImplementation } from "ocn-bridge/dist/models/bridgeConfigurationOptions"
 import * as yargs from "yargs"
 import { MockAPI } from "./api/mock-api"
 import { config } from "./config/config"
@@ -42,6 +43,9 @@ yargs
                 publicBridgeURL: config.cpo.publicIP,
                 ocnClientURL: config.ocn.client,
                 roles: config.cpo.roles,
+                modules: {
+                    implementation: ModuleImplementation.CPO
+                },
                 pluggableAPI: mockAPI,
                 pluggableDB: new Database("cpo.db"),
                 pluggableRegistry: registry,
@@ -63,6 +67,9 @@ yargs
                 publicBridgeURL: config.msp.publicIP,
                 ocnClientURL: config.ocn.client,
                 roles: config.msp.roles,
+                modules: {
+                    implementation: ModuleImplementation.MSP
+                },
                 pluggableAPI: mockAPI,
                 pluggableDB: new Database("msp.db"),
                 pluggableRegistry: registry,

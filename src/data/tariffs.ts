@@ -1,4 +1,4 @@
-import { ITariff } from "ocn-bridge/dist/models/ocpi/tarifffs";
+import { ITariff } from "ocn-bridge/dist/models/ocpi/tariffs";
 import { config } from "../config/config"
 import { extractCPO } from "../tools/tools";
 

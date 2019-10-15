@@ -1,6 +1,6 @@
 import { ICdrLocation, IChargeDetailRecord } from "ocn-bridge/src/models/ocpi/cdrs";
 import { ICdrToken, IChargingPeriod, IPrice } from "ocn-bridge/src/models/ocpi/session";
-import { ITariff } from "ocn-bridge/src/models/ocpi/tarifffs";
+import { ITariff } from "ocn-bridge/src/models/ocpi/tariffs";
 import { IStartSession } from "ocn-bridge/src/models/pluggableAPI";
 import * as uuid from "uuid";
 import { config } from "../config/config"

@@ -202,7 +202,41 @@ To start a charging session, use the following example command, containing the d
 curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/START_SESSION -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/sender/2.2/commands/START_SESSION/0", "location_id": "loc1", "token": {"country_code": "CH", "party_id": "MSP", "uid": "0", "type": "AD_HOC_USER", "contract_id": "0", "issuer": "test MSP", "valid": true, "whitelist": "NEVER", "last_updated": "2019-10-14T15:45:11.353Z"}}'
 ```
 
-TODO: implement async command result, sessions and cdrs
+This is an *asynchronous* request. In OCPI terms, this means that the CPO will call the sender back via the given `response_url` with additional information.
+
+When sending the request, the initial response should tell us that our request has been accepted:
+
+```json
+{
+  "status_code": 1000,
+  "data": {
+    "result": "ACCEPTED",
+    "timeout": 30
+  },
+  "timestamp": "2019-10-15T14:25:05.924Z"
+}
+```
+
+When looking at the logs of the MSP server, there is additional information:
+
+```
+POST /ocpi/sender/2.2/commands/START_SESSION/0 200 0.696 ms - 59
+async command result [START_SESSION 0]: ACCEPTED
+```
+
+This is the asynchronous command result from the CPO, notifying us on the `response_url` we have provided, that the charge point has accepted the session request.
+
+#### Stop charging session
+
+To stop a charging session, we need to obtain its ID. TODO: how to do this.
+
+Then, we can make the stop session request (make sure to change the `session_id` in the request's body):
+
+```
+curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/STOP_SESSION -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/receiver/2.2/commands/STOP_SESSION/0", "session_id": <SESSION_ID>}'
+```
+
+The same asynchronous request flow is present for stopping charging sessions.
 
 ## CLI API
 

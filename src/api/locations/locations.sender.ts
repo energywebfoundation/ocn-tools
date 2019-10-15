@@ -1,7 +1,7 @@
 import { IConnector, IEvse, ILocation } from "ocn-bridge/dist/models/ocpi/locations";
-import { locations } from "../data/locations";
+import { locations } from "../../data/locations";
 
-export class Locations {
+export class LocationsSender {
 
     public async getList(): Promise<ILocation[]> {
         return locations

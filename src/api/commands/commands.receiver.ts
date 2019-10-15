@@ -2,9 +2,9 @@ import { CommandResponseType, CommandResultType, IAsyncCommand, ICommandResult }
 import { IStartSession } from "ocn-bridge/src/models/pluggableAPI";
 import { sendCdrFunc, sendSessionFunc } from "ocn-bridge/src/services/push.service";
 import uuid from "uuid";
-import { MockMonitor } from "../models/mock-monitor";
+import { MockMonitor } from "../../models/mock-monitor";
 
-export class Commands {
+export class CommandsReceiver {
 
     private sessions: { [key: string]: MockMonitor } = {}
 

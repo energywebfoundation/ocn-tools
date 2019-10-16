@@ -32,7 +32,7 @@ export class Session implements ISession {
 
         this.id = id
         this.start_date_time = start.toISOString()
-        this.kwh = kwh
+        this.kwh = Math.round(kwh * 1e4) / 1e4
         this.cdr_token = {
             uid: request.token.uid,
             contract_id: request.token.contract_id,
@@ -40,7 +40,7 @@ export class Session implements ISession {
         }
         this.location_id = request.location_id
         this.evse_uid = request.evse_uid || ""
-        this.connector_id = request.connector_id || ""
+        this.connector_id = ""
         this.status = status
         this.last_updated = new Date().toISOString()
     }

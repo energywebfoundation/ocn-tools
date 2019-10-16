@@ -1,6 +1,7 @@
 import { ICdrLocation, IChargeDetailRecord } from "ocn-bridge/dist/models/ocpi/cdrs";
+import { IConnector, ILocation } from "ocn-bridge/dist/models/ocpi/locations";
 import { authMethod, ICdrToken, IChargingPeriod, IPrice } from "ocn-bridge/dist/models/ocpi/session";
-import { ITariff } from "ocn-bridge/dist/models/ocpi/tariffs";
+import { IPriceComponent, ITariff } from "ocn-bridge/dist/models/ocpi/tariffs";
 import { IStartSession } from "ocn-bridge/dist/models/pluggableAPI";
 import * as uuid from "uuid";
 import { config } from "../config/config";
@@ -38,15 +39,16 @@ export class Cdr implements IChargeDetailRecord {
     // public credit_reference_id?: string
     public last_updated: string
 
-    constructor(sessionID: string, start: Date, kwh: number, request: IStartSession) {
+    constructor(sessionID: string, start: Date, kwh: number, request: IStartSession, location: ILocation, connector: IConnector, tariff?: ITariff) {
         const cpo = extractCPO(config.cpo.roles)
+        const duration = this.calculateTotalTime(start)
+
         this.country_code = cpo.country_code
         this.party_id = cpo.party_id
 
         this.session_id = sessionID
         this.start_date_time = start.toISOString()
         this.end_date_time = new Date().toISOString()
-        const duration = this.calculateTotalTime(start)
         this.cdr_token = {
             uid: request.token.uid,
             contract_id: request.token.contract_id,
@@ -54,36 +56,31 @@ export class Cdr implements IChargeDetailRecord {
         }
         this.cdr_location = {
             id: request.location_id,
-            address: "",
-            city: "",
-            postal_code: "",
-            country: "",
-            coordinates: {
-                latitude: "0.0",
-                longitude: "0.0"
-            },
-            evse_uid: request.evse_uid || "",
-            evse_id: "",
-            connector_id: request.connector_id || "",
-            connector_standard: "IEC_62196_T2",
-            connector_format: "SOCKET",
-            connector_power_type: "AC_3_PHASE"
+            address: location.address,
+            city: location.city,
+            postal_code: location.postal_code || "",
+            country: location.country,
+            coordinates: location.coordinates,
+            evse_uid: request.evse_uid!,
+            evse_id: location.evses!.find((evse) => evse.uid === request.evse_uid!)!.evse_id || "",
+            connector_id: connector.id,
+            connector_standard: connector.standard,
+            connector_format: connector.format,
+            connector_power_type: connector.power_type
         }
         this.currency = "EUR"
+        this.tariffs = tariff ? [tariff] : undefined
         this.charging_periods = [{
             start_date_time: this.start_date_time,
             dimensions: [{
                 type: "TIME",
                 volume: duration
             }],
-            tariff_id: ""
+            tariff_id: tariff ? tariff.id : undefined
         }]
-        this.total_cost = {
-            excl_vat: 0,
-            incl_vat: 0
-        }
-        this.total_energy = kwh
+        this.total_energy = parseFloat(kwh.toFixed(4))
         this.total_time = duration
+        this.total_cost = this.calculateTotalCost(tariff)
         this.last_updated = this.end_date_time
 
     }
@@ -91,6 +88,54 @@ export class Cdr implements IChargeDetailRecord {
     private calculateTotalTime(start: Date): number {
         const durationSeconds = (new Date().getTime() - start.getTime()) / 1000
         return durationSeconds / 60 / 60
+    }
+
+    private calculateTotalCost(tariff?: ITariff): IPrice {
+        const cost = { excl_vat: 0, incl_vat: 0 }
+
+        if (!tariff) {
+            return cost
+        }
+
+        for (const component of tariff.elements[0].price_components) {
+    
+            const componentCost = this.calculateCost(component)
+            cost.excl_vat += componentCost.excl_vat
+
+            if (componentCost.incl_vat) {
+                cost.incl_vat += componentCost.incl_vat
+            }
+        }
+
+        cost.excl_vat = parseFloat(cost.excl_vat.toFixed(2))
+        cost.incl_vat = parseFloat(cost.incl_vat.toFixed(2))
+            
+        return cost
+    }
+
+    private calculateCost(component: IPriceComponent): IPrice {
+        const cost = { excl_vat: 0, incl_vat: 0 }
+
+        switch (component.type) {
+            case "FLAT":
+                cost.excl_vat = component.price
+                break
+            case "TIME":
+                cost.excl_vat = Math.ceil((this.total_time / 3600) / component.step_size) * component.price
+                break
+            case "ENERGY":
+                cost.excl_vat = Math.ceil(this.total_energy / component.step_size) * component.price
+                break
+            case "PARKING_TIME":
+                cost.excl_vat = Math.ceil((this.total_time / 3600) / component.step_size) * component.price
+                break
+        }
+
+        if (component.vat) {
+            cost.incl_vat = cost.excl_vat + (cost.excl_vat * component.vat)
+        }
+
+        return cost
     }
 
 }

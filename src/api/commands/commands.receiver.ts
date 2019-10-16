@@ -3,10 +3,14 @@ import { IStartSession } from "ocn-bridge/src/models/pluggableAPI";
 import { sendCdrFunc, sendSessionFunc } from "ocn-bridge/src/services/push.service";
 import uuid from "uuid";
 import { MockMonitor } from "../../models/mock-monitor";
+import { Locations } from "../locations/locations";
+import { Tariffs } from "../tariffs/tariffs";
 
 export class CommandsReceiver {
 
     private sessions: { [key: string]: MockMonitor } = {}
+
+    constructor(private locations: Locations, private tariffs: Tariffs) {}
 
     public async cancelReservation(): Promise<IAsyncCommand> {
         return {
@@ -28,8 +32,25 @@ export class CommandsReceiver {
 
     public async startSession(request: IStartSession, sendSession: sendSessionFunc, sendCdr: sendCdrFunc): Promise<IAsyncCommand> {
 
+        // check evse exists first
+        const evse = await this.locations.sender.getEvse(request.location_id, request.evse_uid!)
+
+        if (!evse) {
+            return {
+                commandResponse: {
+                    result: CommandResponseType.REJECTED,
+                    timeout: 0
+                }
+            }
+        }
+
+        // need the location details, relevant connector and tariff for cdr
+        const location = await this.locations.sender.getObject(request.location_id)
+        const connector = evse.connectors[0]
+        const tariff = await this.tariffs.sender.getObjectByConnector(connector)
+
         const sessionID = uuid.v4()
-        this.sessions[sessionID] = new MockMonitor(sessionID, request, sendSession, sendCdr)
+        this.sessions[sessionID] = new MockMonitor(sessionID, request, location!, connector, sendSession, sendCdr, tariff)
 
         return {
             commandResponse: {

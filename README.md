@@ -200,10 +200,12 @@ curl -s localhost:8080/ocpi/sender/2.2/tariffs -H "Authorization: Token <TOKEN_C
 
 #### Start charging session
 
-To start a charging session, use the following example command, containing the driver's OCPI token (the mock CPO will accept any):
+To start a charging session, use the following example command, containing the driver's OCPI token 
+(the mock CPO will accept any) and the location/evse they will charge at (the mock CPO will reject 
+the request if it does not know the location):
 
 ```
-curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/START_SESSION -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/sender/2.2/commands/START_SESSION/0", "location_id": "loc1", "token": {"country_code": "CH", "party_id": "MSP", "uid": "0", "type": "AD_HOC_USER", "contract_id": "0", "issuer": "test MSP", "valid": true, "whitelist": "NEVER", "last_updated": "2019-10-14T15:45:11.353Z"}}'
+curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/START_SESSION -H "Authorization: Token d18aa89f-d0b1-457e-a8e5-56ab22c55f13" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/sender/2.2/commands/START_SESSION/0", "location_id": "Loc1", "evse_uid": "CH-CPO-S1E100001", "token": {"country_code": "CH", "party_id": "MSP", "uid": "0", "type": "AD_HOC_USER", "contract_id": "0", "issuer": "test MSP", "valid": true, "whitelist": "NEVER", "last_updated": "2019-10-14T15:45:11.353Z"}}'
 ```
 
 This is an *asynchronous* request. In OCPI terms, this means that the CPO will call the sender back via the given 
@@ -241,12 +243,11 @@ receiver module:
 
 ```html
 PUT /ocpi/receiver/2.2/sessions/CH/CPO/c8cf0ab6-10a2-4c71-88aa-fee1ab29beea 200 5.526 ms - 59
-Session c8cf0ab6-10a2-4c71-88aa-fee1ab29beea ACTIVE
+Session c8cf0ab6-10a2-4c71-88aa-fee1ab29beea ACTIVE - 0.0029 kWh
 ```
 
 Here, the path parameters `/{country_code}/{party_id}/{session_id}` tell us at a glance information about a new 
-session. The mock CPO is currently configured to send out session updates every 10 seconds, though this is 
-quite a bit faster than production servers would.
+session. The mock CPO is currently configured to send out session updates every 30 seconds.
 
 Now that we have the session ID, we can make the stop session request (make sure to change the `session_id` in 
 the request's body):
@@ -261,7 +262,7 @@ receives the async result on the `response_url` specified, however it also recei
 ```html
 POST /ocpi/receiver/2.2/commands/STOP_SESSION/0 404 4.088 ms - 181
 PUT /ocpi/receiver/2.2/sessions/CH/CPO/87351731-7a6d-4ce8-9037-df6ae5d0478f 200 2.118 ms - 59
-Session 87351731-7a6d-4ce8-9037-df6ae5d0478f COMPLETED
+Session 87351731-7a6d-4ce8-9037-df6ae5d0478f COMPLETED - 0.7392 kWh
 POST /ocpi/receiver/2.2/cdrs 200 2.093 ms - 59
 CDR 4545f2d2-3bdc-4156-a87c-b7a0f0c90d92: 0 EUR
 ```

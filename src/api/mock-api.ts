@@ -6,9 +6,9 @@ import { Sessions } from "./sessions/session";
 import { Tariffs } from "./tariffs/tariffs";
 
 export class MockAPI implements IPluggableAPI {
-    public commands = new Commands()
     public locations = new Locations()
     public tariffs = new Tariffs()
+    public commands = new Commands(this.locations, this.tariffs)
     public sessions = new Sessions()
     public cdrs = new Cdrs()
 }

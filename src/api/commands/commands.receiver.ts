@@ -37,9 +37,9 @@ export class CommandsReceiver {
                 timeout: 30
             },
             commandResult: async (): Promise<ICommandResult> => {
-                return {
-                    result: CommandResultType.ACCEPTED
-                }
+                return new Promise((resolve, _) => {
+                    setTimeout(() => resolve({ result: CommandResultType.ACCEPTED }), 250)   
+                })
             }
         }
     }
@@ -64,9 +64,9 @@ export class CommandsReceiver {
                 timeout: 30
             },
             commandResult: async (): Promise<ICommandResult> => {
-                return {
-                    result: CommandResultType.ACCEPTED
-                }
+                return new Promise((resolve, _) => {
+                    setTimeout(() => resolve({ result: CommandResultType.ACCEPTED }), 250)   
+                })
             }
         }
     }

@@ -26,7 +26,7 @@ export const tariffs: ITariff[] = [
                 }
             ]
         }],
-        last_updated: new Date()
+        last_updated: new Date().toISOString()
     },
     {
         country_code: cpo.country_code,
@@ -49,7 +49,7 @@ export const tariffs: ITariff[] = [
                 }
             ]
         }],
-        last_updated: new Date()
+        last_updated: new Date().toISOString()
     },
     {
         country_code: cpo.country_code,
@@ -66,6 +66,6 @@ export const tariffs: ITariff[] = [
                 }
             ]
         }],
-        last_updated: new Date()
+        last_updated: new Date().toISOString()
     }
 ]

@@ -45,7 +45,7 @@ These variables are:
 
 #### Token A
 
-The `TOKEN_A` can be obtain from an OCN client (should be the same as the one in the config). If the API key is known, 
+The `TOKEN_A` can be obtained from an OCN client (should be the same as the one in the config). If the API key is known, 
 a curl request can be made like so:
 
 ```
@@ -155,7 +155,11 @@ For the CPO:
 sqlite3 cpo.db "select token_c from auth;"
 ```
 
-Using the displayed token, requests can be made to the OCN client in OCPI format (version 2.2 RC2).
+Using the displayed token, requests can be made to the OCN client in OCPI format (version 2.2 RC2). The following 
+request examples assume that both MSP and CPO servers have been registered and are awaiting OCPI requests.
+Therefore, open a terminal session for each server, and an additional one to make the requests. The requests can 
+be used again for requests to additional MSPs/CPOs, though note that the actual results may differ as
+the OCPI implementation could be different (e.g. a CPO might not push session updates).
 
 #### Get locations
 
@@ -202,7 +206,8 @@ To start a charging session, use the following example command, containing the d
 curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/START_SESSION -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/sender/2.2/commands/START_SESSION/0", "location_id": "loc1", "token": {"country_code": "CH", "party_id": "MSP", "uid": "0", "type": "AD_HOC_USER", "contract_id": "0", "issuer": "test MSP", "valid": true, "whitelist": "NEVER", "last_updated": "2019-10-14T15:45:11.353Z"}}'
 ```
 
-This is an *asynchronous* request. In OCPI terms, this means that the CPO will call the sender back via the given `response_url` with additional information.
+This is an *asynchronous* request. In OCPI terms, this means that the CPO will call the sender back via the given 
+`response_url` with additional information.
 
 When sending the request, the initial response should tell us that our request has been accepted:
 
@@ -224,19 +229,44 @@ POST /ocpi/sender/2.2/commands/START_SESSION/0 200 0.696 ms - 59
 async command result [START_SESSION 0]: ACCEPTED
 ```
 
-This is the asynchronous command result from the CPO, notifying us on the `response_url` we have provided, that the charge point has accepted the session request.
+This is the asynchronous command result from the CPO, notifying us on the `response_url` we have provided, that the 
+charge point has accepted the session request.
 
 #### Stop charging session
 
-To stop a charging session, we need to obtain its ID. TODO: how to do this.
+To stop a charging session, we need to obtain its ID.
 
-Then, we can make the stop session request (make sure to change the `session_id` in the request's body):
+When looking at the MSP server logs, we can see that there has also been a PUT request made to the OCPI sessions 
+receiver module:
+
+```html
+PUT /ocpi/receiver/2.2/sessions/CH/CPO/c8cf0ab6-10a2-4c71-88aa-fee1ab29beea 200 5.526 ms - 59
+Session c8cf0ab6-10a2-4c71-88aa-fee1ab29beea ACTIVE
+```
+
+Here, the path parameters `/{country_code}/{party_id}/{session_id}` tell us at a glance information about a new 
+session. The mock CPO is currently configured to send out session updates every 10 seconds, though this is 
+quite a bit faster than production servers would.
+
+Now that we have the session ID, we can make the stop session request (make sure to change the `session_id` in 
+the request's body):
 
 ```
 curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/STOP_SESSION -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/receiver/2.2/commands/STOP_SESSION/0", "session_id": <SESSION_ID>}'
 ```
 
-The same asynchronous request flow is present for stopping charging sessions.
+The same asynchronous request flow is also present for stopping charging sessions. We can see that the MSP 
+receives the async result on the `response_url` specified, however it also received an additional request:
+
+```html
+POST /ocpi/receiver/2.2/commands/STOP_SESSION/0 404 4.088 ms - 181
+PUT /ocpi/receiver/2.2/sessions/CH/CPO/87351731-7a6d-4ce8-9037-df6ae5d0478f 200 2.118 ms - 59
+Session 87351731-7a6d-4ce8-9037-df6ae5d0478f COMPLETED
+POST /ocpi/receiver/2.2/cdrs 200 2.093 ms - 59
+CDR 4545f2d2-3bdc-4156-a87c-b7a0f0c90d92: 0 EUR
+```
+
+This shows us that a new charge detail record has been received with, in this case, a price of 0 EUR.
 
 ## CLI API
 

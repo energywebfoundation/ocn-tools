@@ -1,5 +1,6 @@
-import { IStartSession } from "ocn-bridge/src/models/pluggableAPI"
-import { sendCdrFunc, sendSessionFunc } from "ocn-bridge/src/services/push.service"
+import { IStartSession } from "ocn-bridge/dist/models/pluggableAPI"
+import { sendCdrFunc, sendSessionFunc } from "ocn-bridge/dist/services/push.service"
+import { sessionStatus } from "ocn-bridge/src/models/ocpi/session"
 import { Cdr } from "./cdr"
 import { Session } from "./session"
 
@@ -26,10 +27,10 @@ export class MockMonitor {
         }, interval)
 
         // send the first session
-        this.updateSession("ACTIVE")
+        setTimeout(() => this.updateSession("ACTIVE"), 1000)
     }
 
-    public async updateSession(status: string): Promise<void> {
+    public async updateSession(status: sessionStatus): Promise<void> {
         const session = new Session(this.id, this.start, this.kwh, status, this.request)
         await this.sendSession(session)
         this.kwh += 0.1
@@ -43,11 +44,11 @@ export class MockMonitor {
 
             const session = new Session(this.id, this.start, this.kwh, "COMPLETED", this.request)
 
-            await this.sendSession(session)
+            setTimeout(() => this.sendSession(session), 1000)
 
             const cdr = new Cdr(this.id, this.start, this.kwh, this.request)
 
-            await this.sendCdr(cdr)
+            setTimeout(() => this.sendCdr(cdr), 1500)
 
         }
 

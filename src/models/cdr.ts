@@ -1,9 +1,9 @@
-import { ICdrLocation, IChargeDetailRecord } from "ocn-bridge/src/models/ocpi/cdrs";
-import { ICdrToken, IChargingPeriod, IPrice } from "ocn-bridge/src/models/ocpi/session";
-import { ITariff } from "ocn-bridge/src/models/ocpi/tariffs";
-import { IStartSession } from "ocn-bridge/src/models/pluggableAPI";
+import { ICdrLocation, IChargeDetailRecord } from "ocn-bridge/dist/models/ocpi/cdrs";
+import { authMethod, ICdrToken, IChargingPeriod, IPrice } from "ocn-bridge/dist/models/ocpi/session";
+import { ITariff } from "ocn-bridge/dist/models/ocpi/tariffs";
+import { IStartSession } from "ocn-bridge/dist/models/pluggableAPI";
 import * as uuid from "uuid";
-import { config } from "../config/config"
+import { config } from "../config/config";
 import { extractCPO } from "../tools/tools";
 
 export class Cdr implements IChargeDetailRecord {
@@ -11,11 +11,11 @@ export class Cdr implements IChargeDetailRecord {
     public country_code: string
     public party_id: string
     public id: string = uuid.v4()
-    public start_date_time: Date
-    public end_date_time: Date
+    public start_date_time: string
+    public end_date_time: string
     public session_id?: string
     public cdr_token: ICdrToken
-    public auth_method: string = "COMMAND"
+    public auth_method: authMethod = "COMMAND"
     // public authorization_reference?: string
     public cdr_location: ICdrLocation
     // public meter_id?: string
@@ -36,7 +36,7 @@ export class Cdr implements IChargeDetailRecord {
     // public invoice_reference_id?: string
     // public credit?: boolean
     // public credit_reference_id?: string
-    public last_updated: Date
+    public last_updated: string
 
     constructor(sessionID: string, start: Date, kwh: number, request: IStartSession) {
         const cpo = extractCPO(config.cpo.roles)
@@ -44,9 +44,9 @@ export class Cdr implements IChargeDetailRecord {
         this.party_id = cpo.party_id
 
         this.session_id = sessionID
-        this.start_date_time = start
-        this.end_date_time = new Date()
-        const duration = this.calculateTotalTime()
+        this.start_date_time = start.toISOString()
+        this.end_date_time = new Date().toISOString()
+        const duration = this.calculateTotalTime(start)
         this.cdr_token = {
             uid: request.token.uid,
             contract_id: request.token.contract_id,
@@ -84,12 +84,12 @@ export class Cdr implements IChargeDetailRecord {
         }
         this.total_energy = kwh
         this.total_time = duration
-        this.last_updated = new Date()
+        this.last_updated = this.end_date_time
 
     }
 
-    private calculateTotalTime(): number {
-        const durationSeconds = (this.end_date_time.getTime() - this.start_date_time.getTime()) / 1000
+    private calculateTotalTime(start: Date): number {
+        const durationSeconds = (new Date().getTime() - start.getTime()) / 1000
         return durationSeconds / 60 / 60
     }
 

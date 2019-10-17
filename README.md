@@ -198,9 +198,9 @@ Likewise, tariffs can be obtained from the CPO using:
 curl -s localhost:8080/ocpi/sender/2.2/tariffs -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"
 ```
 
-#### Get cdrs
+#### Get Cdrs
 
-Likewise, cdrs can be obtained from the CPO using:
+Likewise, Cdrs can be obtained from the CPO using:
 
 ```
 curl -s localhost:8080/ocpi/sender/2.2/cdrs -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"

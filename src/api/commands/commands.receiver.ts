@@ -1,13 +1,33 @@
 import { CommandResponseType, CommandResultType, IAsyncCommand, ICommandResult } from "ocn-bridge/dist/models/ocpi/commands";
-import { IStartSession } from "ocn-bridge/src/models/pluggableAPI";
-import { sendCdrFunc, sendSessionFunc } from "ocn-bridge/src/services/push.service";
+import { IReserveNow, IStartSession } from "ocn-bridge/dist/models/pluggableAPI";
+import { sendCdrFunc, sendSessionFunc } from "ocn-bridge/dist/services/push.service";
 import uuid from "uuid";
 import { MockMonitor } from "../../models/mock-monitor";
 import { Locations } from "../locations/locations";
 import { Tariffs } from "../tariffs/tariffs";
 
+const accepted = {
+    commandResponse: {
+        result: CommandResponseType.ACCEPTED,
+        timeout: 30
+    },
+    commandResult: async (): Promise<ICommandResult> => {
+        return new Promise((resolve, _) => {
+            setTimeout(() => resolve({ result: CommandResultType.ACCEPTED }), 250)   
+        })
+    }
+}
+
+const rejected = {
+    commandResponse: {
+        result: CommandResponseType.REJECTED,
+        timeout: 0
+    }
+}
+
 export class CommandsReceiver {
 
+    private reservations: IReserveNow[] = []
     private sessions: { [key: string]: MockMonitor } = {}
 
     constructor(private locations: Locations, private tariffs: Tariffs) {}
@@ -21,10 +41,44 @@ export class CommandsReceiver {
         }
     }
 
-    public async reserveNow(): Promise<IAsyncCommand> {
+    public async reserveNow(request: IReserveNow): Promise<IAsyncCommand> {
+        // 1.1 check already reserved
+        const alreadyReserved = this.reservations.find((res) => res.location_id === request.location_id && res.evse_uid === request.evse_uid && res.connector_id === request.connector_id)
+
+        if (alreadyReserved) {
+            return rejected
+        }
+
+        // 1.2 check location is reservable
+        const connector = await this.locations.sender.getConnector(request.location_id, request.evse_uid!, request.connector_id!)
+
+        if (!connector) {
+            return rejected
+        }
+
+        // 2. check expiry_date is valid
+        const duration = (new Date(request.expiry_date).getTime() - new Date().getTime()) / 1000    // seconds
+        const max = 60 * 60 * 60 * 12
+
+        if (duration > max) {
+            return rejected
+        }
+
+        // 3. make reservation
+        this.reservations.push(request)
+
+        // 3.1 check expiry date met
+        setInterval(() => {
+            const isExpired = (new Date().getTime() - new Date(request.expiry_date).getTime()) > 0
+            if (isExpired) {
+                const index = this.reservations.findIndex((res) => res.reservation_id === request.reservation_id)
+                delete this.reservations[index]
+            }
+        }, 1000 * 60 * 60)
+        
         return {
             commandResponse: {
-                result: CommandResponseType.NOT_SUPPORTED,
+                result: CommandResponseType.ACCEPTED,
                 timeout: 0
             }
         }
@@ -52,17 +106,7 @@ export class CommandsReceiver {
         const sessionID = uuid.v4()
         this.sessions[sessionID] = new MockMonitor(sessionID, request, location!, connector, sendSession, sendCdr, tariff)
 
-        return {
-            commandResponse: {
-                result: CommandResponseType.ACCEPTED,
-                timeout: 30
-            },
-            commandResult: async (): Promise<ICommandResult> => {
-                return new Promise((resolve, _) => {
-                    setTimeout(() => resolve({ result: CommandResultType.ACCEPTED }), 250)   
-                })
-            }
-        }
+        return accepted
     }
 
     public async stopSession(sessionID: string): Promise<IAsyncCommand> {
@@ -79,17 +123,7 @@ export class CommandsReceiver {
         await this.sessions[sessionID].stop()
         delete this.sessions[sessionID]
 
-        return {
-            commandResponse: {
-                result: CommandResponseType.ACCEPTED,
-                timeout: 30
-            },
-            commandResult: async (): Promise<ICommandResult> => {
-                return new Promise((resolve, _) => {
-                    setTimeout(() => resolve({ result: CommandResultType.ACCEPTED }), 250)   
-                })
-            }
-        }
+        return accepted
     }
 
     public async unlockConnector(): Promise<IAsyncCommand> {

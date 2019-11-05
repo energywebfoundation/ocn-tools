@@ -63,8 +63,11 @@ export class CommandsReceiver {
         }
 
         // 2. check expiry_date is valid
-        const duration = (new Date(request.expiry_date).getTime() - new Date().getTime()) / 1000    // seconds
-        const max = 60 * 60 * 60 * 12
+        const duration = (new Date(request.expiry_date).getTime() - new Date().getTime()) / 1000
+        const max = 60 * 60 * 12
+
+        console.log(duration)
+        console.log(max)
 
         if (duration > max || duration < 0) {
             return rejected("Invalid expiry_date, should be between 0 and 12 hours in the future")

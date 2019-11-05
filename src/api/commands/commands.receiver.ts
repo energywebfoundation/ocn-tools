@@ -34,17 +34,18 @@ export class CommandsReceiver {
     private reservations: IReserveNow[] = []
     private sessions: { [key: string]: MockMonitor } = {}
 
-    constructor(private locations: Locations, private tariffs: Tariffs) {
-        setInterval(() => console.log(this.reservations.length), 5000)
-    }
+    constructor(private locations: Locations, private tariffs: Tariffs) {}
 
-    public async cancelReservation(): Promise<IAsyncCommand> {
-        return {
-            commandResponse: {
-                result: CommandResponseType.NOT_SUPPORTED,
-                timeout: 0
-            }
+    public async cancelReservation(id: string): Promise<IAsyncCommand> {
+        const index = this.reservations.findIndex((res) => res.reservation_id === id)
+
+        if (index < 0) {
+            return rejected("reservation_id does not exist")
         }
+
+        this.reservations.splice(index, 1)
+
+        return accepted
     }
 
     public async reserveNow(request: IReserveNow): Promise<IAsyncCommand> {
@@ -133,12 +134,7 @@ export class CommandsReceiver {
     public async stopSession(sessionID: string): Promise<IAsyncCommand> {
 
         if (!this.sessions[sessionID]) {
-            return {
-                commandResponse: {
-                    result: CommandResponseType.REJECTED,
-                    timeout: 0
-                }
-            }
+            return rejected("session_id does not exist")
         }
 
         await this.sessions[sessionID].stop()

@@ -22,7 +22,7 @@ export class MockMonitor {
         this.start = new Date()
         
         // set interval of updates in seconds
-        const interval = 30 * 1000
+        const interval = 15 * 1000
 
         // set charging conditions
         this.consumptionIncrement = this.calculateConsumptionIncrement(connector)

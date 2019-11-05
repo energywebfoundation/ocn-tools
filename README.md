@@ -167,7 +167,7 @@ You can send the following GET locations request as MSP, replacing the Authrozat
 obtained using the above SQL command.  
 
 ```
-curl -s localhost:8080/ocpi/sender/2.2/locations -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"
+curl -s localhost:8080/ocpi/sender/2.2/locations -H "Authorization: Token {{TOKEN_C}}" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"
 ```
 
 To parse command line responses, [`jq`](https://stedolan.github.io/jq/) is recommended.
@@ -175,19 +175,19 @@ To parse command line responses, [`jq`](https://stedolan.github.io/jq/) is recom
 For example, check if the OCPI response was successful (should be 1000):
 
 ```
-<REQUEST> | jq .status_code
+{{REQUEST}} | jq .status_code
 ```
 
 Pretty print response data:
 
 ```
-<REQUEST> | jq .data
+{{REQUEST}} | jq .data
 ```
 
 Count objects in response data array:
 
 ```
-<REQUEST> | jq '.data | length'
+{{REQUEST}} | jq '.data | length'
 ```
 
 #### Get tariffs
@@ -195,15 +195,15 @@ Count objects in response data array:
 Likewise, tariffs can be obtained from the CPO using:
 
 ```
-curl -s localhost:8080/ocpi/sender/2.2/tariffs -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"
+curl -s localhost:8080/ocpi/sender/2.2/tariffs -H "Authorization: Token {{TOKEN_C}}" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"
 ```
 
 #### Get Cdrs
 
-Likewise, Cdrs can be obtained from the CPO using:
+Charge detail records can also be obtained from the CPO using:
 
 ```
-curl -s localhost:8080/ocpi/sender/2.2/cdrs -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"
+curl -s localhost:8080/ocpi/sender/2.2/cdrs -H "Authorization: Token {{TOKEN_C}}" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"
 ```
 
 #### Start charging session
@@ -213,7 +213,7 @@ To start a charging session, use the following example command, containing the d
 the request if it does not know the location):
 
 ```
-curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/START_SESSION -H "Authorization: Token d18aa89f-d0b1-457e-a8e5-56ab22c55f13" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/sender/2.2/commands/START_SESSION/0", "location_id": "Loc1", "evse_uid": "CH-CPO-S1E100001", "token": {"country_code": "CH", "party_id": "MSP", "uid": "0", "type": "AD_HOC_USER", "contract_id": "0", "issuer": "test MSP", "valid": true, "whitelist": "NEVER", "last_updated": "2019-10-14T15:45:11.353Z"}}'
+curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/START_SESSION -H "Authorization: Token {{TOKEN_C}}" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/sender/2.2/commands/START_SESSION/0", "location_id": "Loc1", "evse_uid": "CH-CPO-S1E100001", "token": {"country_code": "CH", "party_id": "MSP", "uid": "0", "type": "AD_HOC_USER", "contract_id": "0", "issuer": "test MSP", "valid": true, "whitelist": "NEVER", "last_updated": "2019-10-14T15:45:11.353Z"}}'
 ```
 
 This is an *asynchronous* request. In OCPI terms, this means that the CPO will call the sender back via the given 
@@ -254,14 +254,14 @@ PUT /ocpi/receiver/2.2/sessions/CH/CPO/c8cf0ab6-10a2-4c71-88aa-fee1ab29beea 200 
 Session c8cf0ab6-10a2-4c71-88aa-fee1ab29beea ACTIVE - 0.0029 kWh
 ```
 
-Here, the path parameters `/{country_code}/{party_id}/{session_id}` tell us at a glance information about a new 
+Here, the path parameters `/{{country_code}}/{{party_id}}/{{session_id}}` tell us at a glance information about a new 
 session. The mock CPO is currently configured to send out session updates every 30 seconds.
 
 Now that we have the session ID, we can make the stop session request (make sure to change the `session_id` in 
 the request's body):
 
 ```
-curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/STOP_SESSION -H "Authorization: Token <TOKEN_C>" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/receiver/2.2/commands/STOP_SESSION/0", "session_id": <SESSION_ID>}'
+curl -s -XPOST localhost:8080/ocpi/receiver/2.2/commands/STOP_SESSION -H "Authorization: Token {{TOKEN_C}}" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO" -H "Content-Type: application/json" -d '{"response_url": "http://localhost:3001/ocpi/receiver/2.2/commands/STOP_SESSION/0", "session_id": {{SESSION_ID}}}'
 ```
 
 The same asynchronous request flow is also present for stopping charging sessions. We can see that the MSP 
@@ -276,6 +276,26 @@ CDR 4545f2d2-3bdc-4156-a87c-b7a0f0c90d92: 0 EUR
 ```
 
 This shows us that a new charge detail record has been received with, in this case, a price of 0 EUR.
+
+### Reservation
+
+Using the OCPI command `RESERVE_NOW` is also possible, in order to reserve a particular EVSE from now to the given `expiry_date`:
+
+```
+curl -X POST http://localhost:8080/ocpi/receiver/2.2/commands/RESERVE_NOW -H "Authorization: Token {{TOKEN_C}}" -H "Content-Type: application/json" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-ID: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-ID: CPO" -H "X-Correlation-ID: 1" -H "X-Request-ID: 1" -d '{"response_url": "http://localhost:3001/ocpi/sender/2.2/commands/RESERVE_NOW/0", "token": {"country_code": "CH", "party_id": "MSP", "uid": "1", "type": "APP_USER", "contract_id": "1", "issuer": "some msp", "valid": true, "whitelist": "NEVER", "last_updated": "2019-11-05T10:36:41.778Z"}, "expiry_date": "2019-11-05T18:36:41.778Z", "reservation_id": "1", "location_id": "Loc2", "evse_uid": "CH-CPO-S2E100001"}'
+```
+
+This will block the station until the `expiry_date` passes. During this time only the token that was used to reserve the EVSE can charge there. Once charging has started, the reservation will be deleted.
+
+A reservation can be updated by sending a new `RESERVE_NOW` request with the `reservation id` which should be updated.
+
+A reservation can be cancelled using the `CANCEL_RESERVATION` command:
+
+```
+curl -X POST http://localhost:8080/ocpi/receiver/2.2/commands/CANCEL_RESERVATION -H "Authorization: Token {{TOKEN_C}}" -H "Content-Type: application/json" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-ID: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-ID: CPO" -H "X-Correlation-ID: 1" -H "X-Request-ID: 1" -d '{"response_url": "http://localhost:3001/ocpi/sender/2.2/commands/CANCEL_RESERVATION/0", "reservation_id": "1"}'
+```
+
+As with other commands, this request is asynchronous.
 
 ## CLI API
 

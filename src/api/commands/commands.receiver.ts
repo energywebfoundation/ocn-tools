@@ -1,6 +1,7 @@
 import { CommandResponseType, CommandResultType, IAsyncCommand, ICommandResult } from "ocn-bridge/dist/models/ocpi/commands";
 import { IReserveNow, IStartSession } from "ocn-bridge/dist/models/pluggableAPI";
 import { sendCdrFunc, sendSessionFunc } from "ocn-bridge/dist/services/push.service";
+import { isDeepStrictEqual } from "util";
 import uuid from "uuid";
 import { MockMonitor } from "../../models/mock-monitor";
 import { Locations } from "../locations/locations";
@@ -33,7 +34,9 @@ export class CommandsReceiver {
     private reservations: IReserveNow[] = []
     private sessions: { [key: string]: MockMonitor } = {}
 
-    constructor(private locations: Locations, private tariffs: Tariffs) {}
+    constructor(private locations: Locations, private tariffs: Tariffs) {
+        setInterval(() => console.log(this.reservations.length), 5000)
+    }
 
     public async cancelReservation(): Promise<IAsyncCommand> {
         return {
@@ -66,9 +69,6 @@ export class CommandsReceiver {
         const duration = (new Date(request.expiry_date).getTime() - new Date().getTime()) / 1000
         const max = 60 * 60 * 12
 
-        console.log(duration)
-        console.log(max)
-
         if (duration > max || duration < 0) {
             return rejected("Invalid expiry_date, should be between 0 and 12 hours in the future")
         }
@@ -82,11 +82,14 @@ export class CommandsReceiver {
         } 
 
         // 3.1 check expiry date met
-        setInterval(() => {
+        const interval = setInterval(() => {
+            index = this.reservations.findIndex((res) => res.reservation_id === request.reservation_id)
+            if (index < 0) {
+                return clearInterval(interval)
+            }
             const isExpired = (new Date().getTime() - new Date(request.expiry_date).getTime()) > 0
             if (isExpired) {
-                index = this.reservations.findIndex((res) => res.reservation_id === request.reservation_id)
-                delete this.reservations[index]
+                this.reservations.splice(index, 1)
             }
         }, 1000 * 60 * 60)
         
@@ -99,11 +102,16 @@ export class CommandsReceiver {
         const evse = await this.locations.sender.getEvse(request.location_id, request.evse_uid!)
 
         if (!evse) {
-            return {
-                commandResponse: {
-                    result: CommandResponseType.REJECTED,
-                    timeout: 0
-                }
+            return rejected("EVSE does not exist")
+        }
+
+        // check evse has not been reserved
+        const reserved = this.reservations.find((res) => res.location_id === request.location_id && res.evse_uid === request.evse_uid)
+        let reservationIndex = -1
+        if (reserved) {
+            reservationIndex = this.reservations.findIndex((res) => res.reservation_id === reserved.reservation_id)
+            if (!isDeepStrictEqual(reserved.token, request.token)) {
+                return rejected("EVSE has been reserved by a different EV driver")
             }
         }
 
@@ -114,6 +122,10 @@ export class CommandsReceiver {
 
         const sessionID = uuid.v4()
         this.sessions[sessionID] = new MockMonitor(sessionID, request, location!, connector, sendSession, sendCdr, tariff)
+
+        if (reservationIndex >= 0) {
+            this.reservations.splice(reservationIndex, 1)
+        }
 
         return accepted
     }

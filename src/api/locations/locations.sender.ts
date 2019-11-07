@@ -1,4 +1,4 @@
-import { IConnector, IEvse, ILocation } from "ocn-bridge/dist/models/ocpi/locations";
+import { IConnector, IEnergyMix, IEvse, ILocation } from "ocn-bridge/dist/models/ocpi/locations";
 import { locations } from "../../data/locations";
 
 export class LocationsSender {
@@ -30,9 +30,9 @@ export class LocationsSender {
         return found
     }
 
-    public async getEnergyMix(id: string): Promise<ILocation | undefined> {
+    public async getEnergyMix(id: string): Promise<IEnergyMix | undefined> {
         const energyMix = locations.find((location) => location.id === id)
-        if (!energyMix || energyMix.energy_mix) {
+        if (!energyMix || !energyMix.energy_mix) {
             return
         }
         return energyMix.energy_mix

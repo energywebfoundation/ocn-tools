@@ -30,4 +30,12 @@ export class LocationsSender {
         return found
     }
 
+    public async getEnergyMix(id: string): Promise<ILocation | undefined> {
+        const energyMix = locations.find((location) => location.id === id)
+        if (!energyMix || energyMix.energy_mix) {
+            return
+        }
+        return energyMix.energy_mix
+    }
+
 }

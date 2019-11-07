@@ -91,8 +91,9 @@ export class CommandsReceiver {
             const isExpired = (new Date().getTime() - new Date(request.expiry_date).getTime()) > 0
             if (isExpired) {
                 this.reservations.splice(index, 1)
+                clearInterval(interval)
             }
-        }, 1000 * 60 * 60)
+        }, 1000 * 10)
         
         return accepted
     }

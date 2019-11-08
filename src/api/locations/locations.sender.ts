@@ -1,4 +1,4 @@
-import { IConnector, IEnergyMix, IEvse, ILocation } from "ocn-bridge/dist/models/ocpi/locations";
+import { IConnector, IEvse, ILocation } from "ocn-bridge/dist/models/ocpi/locations";
 import { locations } from "../../data/locations";
 
 export class LocationsSender {
@@ -28,14 +28,6 @@ export class LocationsSender {
         }
         const found = evse.connectors.find((connector) => connector.id === connectorID)
         return found
-    }
-
-    public async getEnergyMix(id: string): Promise<IEnergyMix | undefined> {
-        const energyMix = locations.find((location) => location.id === id)
-        if (!energyMix || !energyMix.energy_mix) {
-            return
-        }
-        return energyMix.energy_mix
     }
 
 }

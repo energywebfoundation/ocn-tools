@@ -52,11 +52,11 @@ for (i = 1; i <= 10; i++) {
             ],
             environ_impact: [
                 { 
-                    source: "NUCLEAR_WASTE", 
+                    category: "NUCLEAR_WASTE", 
                     amount: 0.0006
                 },
                 {  
-                    source: "CARBON_DIOXIDE", 
+                    category: "CARBON_DIOXIDE", 
                     amount: 298
                 }
             ],

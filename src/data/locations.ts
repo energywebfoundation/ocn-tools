@@ -1,4 +1,4 @@
-import { ILocation } from "ocn-bridge/dist/models/ocpi/locations";
+import { IEnergyMix, ILocation } from "ocn-bridge/dist/models/ocpi/locations";
 import { config } from "../config/config";
 import { extractCPO } from "../tools/tools";
 
@@ -11,7 +11,8 @@ for (i = 1; i <= 10; i++) {
     const cpo = extractCPO(config.cpo.roles)
 
     let tariffID: string
-
+    let eneryMix: IEnergyMix
+   
     switch (true) {
         case (i < 5):
             tariffID = "1"
@@ -23,6 +24,47 @@ for (i = 1; i <= 10; i++) {
             tariffID = "3"
     }
 
+    eneryMix = {
+        is_green_energy: true,
+        supplier_name: "Utility 2",
+        energy_product_name: "Product green"
+    }
+
+    if (i < 5) {
+        eneryMix = {
+            is_green_energy: false,
+            energy_sources: [ 
+                { 
+                    source: "WATER", 
+                    percentage: 55.4 
+                },
+                {   source: "NUCLEAR",
+                    percentage: 36.1 
+                },
+                { 
+                    source: "GENERAL_FOSSIL",
+                    percentage: 2.8 
+                },
+                {  
+                    source: "GENERAL_GREEN", 
+                    "percentage": 5.7 
+                },
+            ],
+            environ_impact: [
+                { 
+                    category: "NUCLEAR_WASTE", 
+                    amount: 0.0006
+                },
+                {  
+                    category: "CARBON_DIOXIDE", 
+                    amount: 298
+                }
+            ],
+            supplier_name: "Utility 1",
+            energy_product_name: "Product gray"
+        }
+    }
+    
     locations.push({
         country_code: cpo.country_code,
         party_id: cpo.party_id,
@@ -84,6 +126,7 @@ for (i = 1; i <= 10; i++) {
                 last_updated: "2019-10-14T12:02:45.006Z"
             }
         ],
+        energy_mix: eneryMix,
         last_updated: "2019-10-14T12:02:45.006Z"
     })
 }

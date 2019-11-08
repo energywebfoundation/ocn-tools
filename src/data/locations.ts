@@ -5,13 +5,13 @@ import { extractCPO } from "../tools/tools";
 export const locations: ILocation[] = []
 
 let i: number
-let eneryMix: IEnergyMix
 
 for (i = 1; i <= 10; i++) {
 
     const cpo = extractCPO(config.cpo.roles)
 
     let tariffID: string
+    let eneryMix: IEnergyMix
    
     switch (true) {
         case (i < 5):

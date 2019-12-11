@@ -20,7 +20,7 @@
   "homepage": "https://bitbucket.org/shareandcharge/ocn-tools#readme",
   "dependencies": {
     "better-sqlite3": "^5.4.3",
-    "ocn-bridge": "git+https://bitbucket.org/shareandcharge/ocn-bridge.git",
+    "ocn-bridge": "git+https://bitbucket.org/shareandcharge/ocn-bridge.git#ocn-node-referencing",
     "uuid": "^3.3.3",
     "yargs": "^14.2.0"
   },

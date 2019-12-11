@@ -26,33 +26,33 @@ cp src/config/config.local.ts src/config/config.ts
 ```
 
 See also the example `config.volta.ts` config which shows an example of config parameters needed to connect to
-the Energy Web Chain's Volta test network. In this case, the `ocn.client` is fake and the `publicIP` of the `msp`
+the Energy Web Chain's Volta test network. In this case, the `ocn.node` is fake and the `publicIP` of the `msp`
 and `cpo` config options should be changed to match the desired public IP of the OCPI party. This is required 
-because as part of the OCPI credentials handshake, the OCN client needs to fetch supported versions and modules 
+because as part of the OCPI credentials handshake, the OCN node needs to fetch supported versions and modules 
 from the OCPI party.
 
 ### 2. Prepare environment variables for registration
 
 The mock MSP/CPO, in addition to the provided configuration parameters, need at least two environment variables in 
-order to register the party to the OCN Registry and connect to an OCN Client. Because these variables are only needed
+order to register the party to the OCN Registry and connect to an OCN Node. Because these variables are only needed
 to register, they can be discarded on future runs.
 
 These variables are:
 
-- `TOKEN_A` - the OCPI credentials TOKEN_A which allows the party to connect to an OCN client
+- `TOKEN_A` - the OCPI credentials TOKEN_A which allows the party to connect to an OCN node
 - `SIGNER_KEY` - the private key used to sign the OCN registry listing
 - `SPENDER_KEY` - [optional] the private key which will pay the transaction fee for adding the party to the OCN registry (same as `SIGNER_KEY` if not provided)
 
 #### Token A
 
-The `TOKEN_A` can be obtained from an OCN client (should be the same as the one in the config). If the API key is known, 
+The `TOKEN_A` can be obtained from an OCN node (should be the same as the one in the config). If the API key is known, 
 a curl request can be made like so:
 
 ```
 curl -XPOST localhost:8080/admin/generate-registration-token -H 'Authorization: Token randomkey' -H 'Content-Type: application/json' -d '[{"country_code": "CH", "party_id": "CPO"}]'
 ```
 
-Otherwise, `TOKEN_A` can be retrieved offline from the chosen OCN client's administrator. 
+Otherwise, `TOKEN_A` can be retrieved offline from the chosen OCN node's administrator. 
 
 #### Private keys
 
@@ -143,7 +143,7 @@ for (i = 0; i < 10000000; i++) {
 ### Making requests
 
 To make a request as the mock MSP or CPO, it is necessary to find the `TOKEN_C` which was given to the party during
-the OCPI credentials registration handshake with the OCN client. To do so, run the following:
+the OCPI credentials registration handshake with the OCN node. To do so, run the following:
 
 For the MSP:
 ```
@@ -155,7 +155,7 @@ For the CPO:
 sqlite3 cpo.db "select token_c from auth;"
 ```
 
-Using the displayed token, requests can be made to the OCN client in OCPI format (version 2.2 RC2). The following 
+Using the displayed token, requests can be made to the OCN node in OCPI format (version 2.2 RC2). The following 
 request examples assume that both MSP and CPO servers have been registered and are awaiting OCPI requests.
 Therefore, open a terminal session for each server, and an additional one to make the requests. The requests can 
 be used again for requests to additional MSPs/CPOs, though note that the actual results may differ as

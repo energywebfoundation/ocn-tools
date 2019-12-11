@@ -41,7 +41,7 @@ yargs
             const cpoServer = await startBridge({
                 port: config.cpo.port,
                 publicBridgeURL: config.cpo.publicIP,
-                ocnClientURL: config.ocn.client,
+                ocnNodeURL: config.ocn.node,
                 roles: config.cpo.roles,
                 modules: {
                     implementation: ModuleImplementation.CPO
@@ -65,7 +65,7 @@ yargs
             const mspServer = await startBridge({
                 port: config.msp.port,
                 publicBridgeURL: config.msp.publicIP,
-                ocnClientURL: config.ocn.client,
+                ocnNodeURL: config.ocn.node,
                 roles: config.msp.roles,
                 modules: {
                     implementation: ModuleImplementation.MSP

@@ -2,7 +2,7 @@ import * as uuid from "uuid"
 
 export const config = {
     ocn: {
-        client: "http://client.ocn.org",
+        node: "http://node.ocn.org",
         registry: {
             provider: "http://35.178.1.16",
             address: "0x50ba770224D92424D72d382F5F367E4d1DBeB4b2"

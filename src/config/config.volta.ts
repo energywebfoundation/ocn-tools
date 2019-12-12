@@ -5,7 +5,7 @@ export const config = {
         node: "http://node.ocn.org",
         registry: {
             provider: "http://35.178.1.16",
-            address: "0x50ba770224D92424D72d382F5F367E4d1DBeB4b2"
+            address: "0x0A5f27Ee1EbDC68034aDbd9446F9375783aeF7DC"
         }
     },
     cpo: {

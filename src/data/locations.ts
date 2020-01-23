@@ -70,7 +70,7 @@ for (i = 1; i <= 10; i++) {
         party_id: cpo.party_id,
         id: `Loc${i}`,
         name: `Station ${i}`,
-        type: "OTHER",
+        publish: true,
         address: `Test-Street ${i}`,
         city: "Zug",
         postal_code: "6300",

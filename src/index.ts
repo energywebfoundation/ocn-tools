@@ -38,6 +38,8 @@ yargs
 
             console.log("Starting CPO server...")
 
+            const database = new Database("cpo.db")
+
             const cpoServer = await startBridge({
                 port: config.cpo.port,
                 publicBridgeURL: config.cpo.publicIP,
@@ -47,12 +49,15 @@ yargs
                     implementation: ModuleImplementation.CPO
                 },
                 pluggableAPI: mockAPI,
-                pluggableDB: new Database("cpo.db"),
+                pluggableDB: database,
                 pluggableRegistry: registry,
                 logger: true
             })
 
             console.log("CPO server listening for OCPI requests")
+            
+            const token = await database.getTokenC()
+            console.log(`To send requests as the CPO, use Authorization Token ${token}`)
 
             if (args.registerOnly) {
                 console.log("Shutting down CPO server...")
@@ -61,6 +66,8 @@ yargs
         } else if (args.msp) {
 
             console.log("Starting MSP server...")
+
+            const database = new Database("msp.db")
 
             const mspServer = await startBridge({
                 port: config.msp.port,
@@ -71,12 +78,15 @@ yargs
                     implementation: ModuleImplementation.MSP
                 },
                 pluggableAPI: mockAPI,
-                pluggableDB: new Database("msp.db"),
+                pluggableDB: database,
                 pluggableRegistry: registry,
                 logger: true
             })
 
             console.log("MSP server listening for OCPI requests")
+
+            const token = await database.getTokenC()
+            console.log(`To send requests as the MSP, use Authorization Token ${token}`)
 
             if (args.registerOnly) {
                 console.log("Shutting down MSP server...")

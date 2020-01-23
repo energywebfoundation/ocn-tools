@@ -142,29 +142,16 @@ for (i = 0; i < 10000000; i++) {
 
 ### Making requests
 
-To make a request as the mock MSP or CPO, it is necessary to find the `TOKEN_C` which was given to the party during
-the OCPI credentials registration handshake with the OCN node. To do so, run the following:
-
-For the MSP:
-```
-sqlite3 msp.db "select token_c from auth;"
-```
-
-For the CPO:
-```
-sqlite3 cpo.db "select token_c from auth;"
-```
-
-Using the displayed token, requests can be made to the OCN node in OCPI format (version 2.2 RC2). The following 
-request examples assume that both MSP and CPO servers have been registered and are awaiting OCPI requests.
-Therefore, open a terminal session for each server, and an additional one to make the requests. The requests can 
-be used again for requests to additional MSPs/CPOs, though note that the actual results may differ as
-the OCPI implementation could be different (e.g. a CPO might not push session updates).
+Using the authorization token displayed on MSP or CPO start, requests can be made to the OCN node in OCPI format 
+(version 2.2). The following request examples assume that both MSP and CPO servers have been registered and are 
+awaiting OCPI requests. Therefore, open a terminal session for each server, and an additional one to make the 
+requests. The requests can be used again for requests to additional MSPs/CPOs, though note that the actual results 
+may differ as the OCPI implementation could be different (e.g. a CPO might not push session updates).
 
 #### Get locations
 
-You can send the following GET locations request as MSP, replacing the Authrozation TOKEN_C with that which was 
-obtained using the above SQL command.  
+You can send the following GET locations request as MSP, replacing the Authrozation TOKEN_C with the MSP's 
+Authorization Token.  
 
 ```
 curl -s localhost:8080/ocpi/sender/2.2/locations -H "Authorization: Token {{TOKEN_C}}" -H "X-Request-ID: 0" -H "X-Correlation-ID: 0" -H "OCPI-From-Country-Code: CH" -H "OCPI-From-Party-Id: MSP" -H "OCPI-To-Country-Code: CH" -H "OCPI-To-Party-Id: CPO"

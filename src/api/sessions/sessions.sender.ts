@@ -13,7 +13,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { ISession } from "ocn-bridge/dist/models/ocpi/session";
+
+import { ISession } from "@shareandcharge/ocn-bridge/dist/models/ocpi/session";
 import { sessions } from "../../data/sessions"
 
 export class SessionsSender {

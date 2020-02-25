@@ -13,7 +13,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { IEnergyMix, ILocation } from "ocn-bridge/dist/models/ocpi/locations";
+
+import { IEnergyMix, ILocation } from "@shareandcharge/ocn-bridge/dist/models/ocpi/locations";
 import { config } from "../config/config";
 import { extractCPO } from "../tools/tools";
 

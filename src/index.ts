@@ -13,8 +13,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { DefaultRegistry, startBridge, stopBridge } from "ocn-bridge"
-import { ModuleImplementation } from "ocn-bridge/dist/models/bridgeConfigurationOptions"
+
+import { DefaultRegistry, startBridge, stopBridge } from "@shareandcharge/ocn-bridge"
+import { ModuleImplementation } from "@shareandcharge/ocn-bridge/dist/models/bridgeConfigurationOptions"
 import * as yargs from "yargs"
 import { MockAPI } from "./api/mock-api"
 import { config } from "./config/config"
@@ -47,7 +48,7 @@ yargs
         }
 
         const mockAPI = new MockAPI()
-        const registry = new DefaultRegistry(config.ocn.registry.provider, config.ocn.registry.address)
+        const registry = new DefaultRegistry(config.ocn.stage)
 
         if (args.cpo) {
 

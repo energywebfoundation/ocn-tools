@@ -13,7 +13,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { IChargeDetailRecord } from "ocn-bridge/dist/models/ocpi/cdrs";
+
+import { IChargeDetailRecord } from "@shareandcharge/ocn-bridge/dist/models/ocpi/cdrs";
 
 export class CdrsReceiver {
 

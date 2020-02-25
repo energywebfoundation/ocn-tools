@@ -14,8 +14,8 @@
     limitations under the License.
 */
 import * as sqlite3 from "better-sqlite3"
-import { IPluggableDB } from "ocn-bridge";
-import { IVersionDetail } from "ocn-bridge/dist/models/ocpi/versions";
+import { IPluggableDB } from "@shareandcharge/ocn-bridge";
+import { IVersionDetail } from "@shareandcharge/ocn-bridge/dist/models/ocpi/versions";
 
 export class Database implements IPluggableDB {
 

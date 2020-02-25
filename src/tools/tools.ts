@@ -13,7 +13,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { IRole } from "ocn-bridge/dist/models/ocpi/credentials";
+
+import { IRole } from "@shareandcharge/ocn-bridge/dist/models/ocpi/credentials";
 
 export const extractCPO = (roles: IRole[]): IRole => {
     const cpo = roles.find((role) => role.role === "CPO")

@@ -13,7 +13,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { IConnector, IEvse, ILocation } from "ocn-bridge/dist/models/ocpi/locations";
+
+import { IConnector, IEvse, ILocation } from "@shareandcharge/ocn-bridge/dist/models/ocpi/locations";
 import { locations } from "../../data/locations";
 
 export class LocationsSender {

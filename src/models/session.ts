@@ -13,9 +13,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { authMethod } from "ocn-bridge/dist/models/ocpi/session";
-import { ICdrToken, ISession, sessionStatus } from "ocn-bridge/src/models/ocpi/session";
-import { IStartSession } from "ocn-bridge/src/models/pluggableAPI";
+
+import { authMethod } from "@shareandcharge/ocn-bridge/dist/models/ocpi/session";
+import { ICdrToken, ISession, sessionStatus } from "@shareandcharge/ocn-bridge/src/models/ocpi/session";
+import { IStartSession } from "@shareandcharge/ocn-bridge/src/models/pluggableAPI";
 import { config } from "../config/config";
 import { extractCPO } from "../tools/tools";
 

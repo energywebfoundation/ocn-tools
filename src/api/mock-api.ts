@@ -13,7 +13,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { IPluggableAPI } from "ocn-bridge";
+
+import { IPluggableAPI } from "@shareandcharge/ocn-bridge";
 import { Cdrs } from "./cdrs/cdrs";
 import { Commands } from "./commands/commands";
 import { Locations } from "./locations/locations";

@@ -13,9 +13,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { CommandResponseType, CommandResultType, IAsyncCommand, ICommandResult } from "ocn-bridge/dist/models/ocpi/commands";
-import { IReserveNow, IStartSession } from "ocn-bridge/dist/models/pluggableAPI";
-import { sendCdrFunc, sendSessionFunc } from "ocn-bridge/dist/services/push.service";
+
+import { CommandResponseType, CommandResultType, IAsyncCommand, ICommandResult } from "@shareandcharge/ocn-bridge/dist/models/ocpi/commands";
+import { IReserveNow, IStartSession } from "@shareandcharge/ocn-bridge/dist/models/pluggableAPI";
+import { sendCdrFunc, sendSessionFunc } from "@shareandcharge/ocn-bridge/dist/services/push.service";
 import { isDeepStrictEqual } from "util";
 import uuid from "uuid";
 import { MockMonitor } from "../../models/mock-monitor";

@@ -1,5 +1,5 @@
 {
-  "name": "ocn-tools",
+  "name": "@shareandcharge/ocn-tools",
   "version": "0.1.0",
   "description": "Common tools for aiding development of applications built on top of the OCN",
   "main": "index.js",
@@ -15,12 +15,12 @@
     "type": "git",
     "url": "git+ssh://git@bitbucket.org/shareandcharge/ocn-tools.git"
   },
-  "author": "Share&Charge Foundation",
-  "license": "GPL-3.0",
+  "author": "eMobilify GmbH",
+  "license": "Apache-2.0",
   "homepage": "https://bitbucket.org/shareandcharge/ocn-tools#readme",
   "dependencies": {
+    "@shareandcharge/ocn-bridge": "git+https://bitbucket.org/shareandcharge/ocn-bridge.git",
     "better-sqlite3": "^5.4.3",
-    "ocn-bridge": "git+https://bitbucket.org/shareandcharge/ocn-bridge.git",
     "uuid": "^3.3.3",
     "yargs": "^14.2.0"
   },

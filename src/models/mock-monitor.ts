@@ -13,11 +13,12 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { IConnector, ILocation } from "ocn-bridge/dist/models/ocpi/locations"
-import { ITariff } from "ocn-bridge/dist/models/ocpi/tariffs"
-import { IStartSession } from "ocn-bridge/dist/models/pluggableAPI"
-import { sendCdrFunc, sendSessionFunc } from "ocn-bridge/dist/services/push.service"
-import { sessionStatus } from "ocn-bridge/src/models/ocpi/session"
+
+import { IConnector, ILocation } from "@shareandcharge/ocn-bridge/dist/models/ocpi/locations"
+import { ITariff } from "@shareandcharge/ocn-bridge/dist/models/ocpi/tariffs"
+import { IStartSession } from "@shareandcharge/ocn-bridge/dist/models/pluggableAPI"
+import { sendCdrFunc, sendSessionFunc } from "@shareandcharge/ocn-bridge/dist/services/push.service"
+import { sessionStatus } from "@shareandcharge/ocn-bridge/src/models/ocpi/session"
 import { Cdr } from "./cdr"
 import { Session } from "./session"
 

@@ -13,7 +13,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { ITariff } from "ocn-bridge/dist/models/ocpi/tariffs";
+
+import { ITariff } from "@shareandcharge/ocn-bridge/dist/models/ocpi/tariffs";
 import { config } from "../config/config";
 import { extractCPO } from "../tools/tools";
 

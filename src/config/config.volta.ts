@@ -18,10 +18,7 @@ import * as uuid from "uuid"
 export const config = {
     ocn: {
         node: "http://node.ocn.org",
-        registry: {
-            provider: "http://35.178.1.16",
-            address: "0x0A5f27Ee1EbDC68034aDbd9446F9375783aeF7DC"
-        }
+        stage: "local"
     },
     cpo: {
         port: 3000,

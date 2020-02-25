@@ -13,8 +13,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import { IConnector } from "ocn-bridge/dist/models/ocpi/locations"
-import { ITariff } from "ocn-bridge/src/models/ocpi/tariffs"
+
+import { IConnector } from "@shareandcharge/ocn-bridge/dist/models/ocpi/locations"
+import { ITariff } from "@shareandcharge/ocn-bridge/src/models/ocpi/tariffs"
 import { tariffs } from "../../data/tariffs"
 
 export class TariffsSender {

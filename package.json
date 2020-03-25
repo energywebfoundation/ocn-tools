@@ -19,7 +19,7 @@
   "license": "Apache-2.0",
   "homepage": "https://bitbucket.org/shareandcharge/ocn-tools#readme",
   "dependencies": {
-    "@shareandcharge/ocn-bridge": "git+https://bitbucket.org/shareandcharge/ocn-bridge.git",
+    "@shareandcharge/ocn-bridge": "git+https://bitbucket.org/shareandcharge/ocn-bridge.git#606d9da0b65d23069950e877a37a63338968dac9",
     "better-sqlite3": "^5.4.3",
     "uuid": "^3.3.3",
     "yargs": "^14.2.0"

@@ -21,7 +21,7 @@ import { extractMSP } from "../tools/tools"
 
 const msp = extractMSP(config.msp.roles)
 
-const mt = MersenneTwister19937.seed(2)
+const mt = MersenneTwister19937.seed(3)
 
 export const tokens: IToken[] = []
 
